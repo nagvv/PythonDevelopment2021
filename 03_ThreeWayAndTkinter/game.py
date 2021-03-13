@@ -28,7 +28,11 @@ class App(tk.Frame):
 
     def createNumButtons(self):
         for i in range(1, 16):
-            setattr(self, f'numButton{i}', tk.Button(self, text=str(i), height=NUM_BUTTON_HEIGHT, width=NUM_BUTTON_WIDTH))
+            def getOnClick(i):
+                def tiedOnClick():
+                    return self.onClick(i)
+                return tiedOnClick
+            setattr(self, f'numButton{i}', tk.Button(self, text=str(i), command=getOnClick(i), height=NUM_BUTTON_HEIGHT, width=NUM_BUTTON_WIDTH))
 
     def newGame(self):
         positions = [i for i in range(16)] # 0 - empty cells, others are number cells with corresponding numbers
@@ -40,6 +44,16 @@ class App(tk.Frame):
                 self.emptyCell = (col, row)
                 continue
             getattr(self, f'numButton{i}').grid(row=row, column=col, sticky='nsew')
+
+    def onClick(self, i):
+        info = getattr(self, f'numButton{i}').grid_info()
+        pos = (info['column'], info['row'])
+        if self.emptyCell == (pos[0] + 1, pos[1]) or \
+           self.emptyCell == (pos[0] - 1, pos[1]) or \
+           self.emptyCell == (pos[0], pos[1] + 1) or \
+           self.emptyCell == (pos[0], pos[1] - 1):
+            getattr(self, f'numButton{i}').grid(row=self.emptyCell[1], column=self.emptyCell[0], sticky='nsew')
+            self.emptyCell = pos
 
 if __name__ == "__main__":
     window = tk.Tk()
