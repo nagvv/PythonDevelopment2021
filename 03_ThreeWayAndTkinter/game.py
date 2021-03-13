@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import messagebox
 from random import shuffle
 
 WINDOW_MIN_WIDTH = 200
@@ -54,6 +55,19 @@ class App(tk.Frame):
            self.emptyCell == (pos[0], pos[1] - 1):
             getattr(self, f'numButton{i}').grid(row=self.emptyCell[1], column=self.emptyCell[0], sticky='nsew')
             self.emptyCell = pos
+            self.check()
+
+    def check(self):
+        ok = True
+        for i in range(1, 16):
+            info = getattr(self, f'numButton{i}').grid_info()
+            pos = (info['row'] - 1) * 4 + info['column']
+            if i != pos + 1:
+                ok = False
+                break
+        if ok:
+            messagebox.showinfo('Congratulations!', 'You won!')
+            self.newGame()
 
 if __name__ == "__main__":
     window = tk.Tk()
