@@ -37,7 +37,25 @@ class App(tk.Frame):
 
     def newGame(self):
         positions = [i for i in range(16)] # 0 - empty cells, others are number cells with corresponding numbers
-        shuffle(positions) # TODO: check solvability and if not rotate numbers
+        shuffle(positions)
+        N = 0
+        for pos in range(0, 16):
+            i = positions[pos]
+            if i == 0:
+                N += (pos // 4) + 1
+                continue
+            for j in positions[pos + 1:]:
+                if j < i:
+                    N += 1
+        if N % 2 != 0:
+            # N is odd, that means current disposition is unsolvable
+            # to make it solvable again we just need to make N even
+            # for it we'll just swap two adjacent numbers ...,3,6,... -> ...,6,3,...
+            if 0 not in positions[:2]:
+                positions[0], positions[1] = positions[1], positions[0]
+            else:
+                positions[2], positions[3] = positions[3], positions[2]
+
         for pos, i in enumerate(positions):
             row = 1 + pos // 4
             col = pos % 4
